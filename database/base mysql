@@ -1,0 +1,51 @@
+-- Crear la base de datos
+CREATE DATABASE punto_venta;
+
+-- Usar la base de datos creada
+USE punto_venta;
+
+-- Crear la tabla usuarios
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    correo VARCHAR(100) NOT NULL,
+    contrasena VARCHAR(100) NOT NULL,
+    rol VARCHAR(20) NOT NULL
+);
+
+-- Crear la tabla categorias
+CREATE TABLE categorias (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL
+);
+
+-- Crear la tabla productos
+CREATE TABLE productos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    cantidad INT NOT NULL,
+    id_categoria INT,
+    precio DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (id_categoria) REFERENCES categorias(id) ON DELETE CASCADE
+);
+
+-- Crear la tabla ventas
+CREATE TABLE ventas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_producto INT,
+    cant INT,
+    id_cajero INT,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_producto) REFERENCES productos(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_cajero) REFERENCES usuarios(id) ON DELETE CASCADE
+);
+
+
+
+
+INSERT INTO `usuarios` (`id`, `nombre`, `apellido`, `correo`, `contrasena`, `rol`) 
+VALUES (NULL, 'Administrador', 'x', 'Admin@gmail.com', '1234567890', 'Administrador');
+
+INSERT INTO `usuarios` (`id`, `nombre`, `apellido`, `correo`, `contrasena`, `rol`) 
+VALUES (NULL, 'Cajero', 'x', 'Cajero@gmail.com', '1234567890', 'Cajero');
