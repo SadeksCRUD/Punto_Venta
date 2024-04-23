@@ -1,0 +1,111 @@
+
+CREATE TABLE `diagnostico` (
+  `idDiagnostico` int(11) NOT NULL AUTO_INCREMENT,
+  `idPaciente` int(11) DEFAULT NULL,
+  `fecha` varchar(50) NOT NULL,
+  `descripcion` varchar(100) NOT NULL,
+  `idMedico` int(11) DEFAULT NULL,
+  PRIMARY KEY (`idDiagnostico`),
+  KEY `idMedico` (`idMedico`),
+  KEY `idPaciente` (`idPaciente`),
+  CONSTRAINT `diagnostico_ibfk_1` FOREIGN KEY (`idMedico`) REFERENCES `medico` (`idMedico`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `diagnostico_ibfk_2` FOREIGN KEY (`idPaciente`) REFERENCES `paciente` (`idPaciente`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+CREATE TABLE `farmacia` (
+  `idFarmacia` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `idMedicina` int(11) DEFAULT NULL,
+  PRIMARY KEY (`idFarmacia`),
+  KEY `idMedicina` (`idMedicina`),
+  CONSTRAINT `farmacia_ibfk_1` FOREIGN KEY (`idMedicina`) REFERENCES `medicamento` (`idMedicina`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE `historialclinico` (
+  `idHistorial` int(11) NOT NULL AUTO_INCREMENT,
+  `idPaciente` int(11) DEFAULT NULL,
+  `enfermedadCronica` varchar(100) NOT NULL,
+  `cirugiaPrevia` varchar(100) NOT NULL,
+  `medicamentoActual` varchar(100) NOT NULL,
+  `medicamentoPrevio` varchar(100) NOT NULL,
+  `signosVitales` varchar(100) NOT NULL,
+  `peso` int(100) NOT NULL,
+  `altura` int(100) NOT NULL,
+  `notaMedica` varchar(100) NOT NULL,
+  `tipoSangre` varchar(100) NOT NULL,
+  PRIMARY KEY (`idHistorial`),
+  KEY `idPaciente` (`idPaciente`),
+  CONSTRAINT `historialclinico_ibfk_1` FOREIGN KEY (`idPaciente`) REFERENCES `paciente` (`idPaciente`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE `medicamento` (
+  `idMedicina` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `descripcion` varchar(100) NOT NULL,
+  `cantidad` int(100) NOT NULL,
+  `precio` int(50) NOT NULL,
+  PRIMARY KEY (`idMedicina`),
+  CONSTRAINT `medicamento_ibfk_1` FOREIGN KEY (`idMedicina`) REFERENCES `farmacia` (`idMedicina`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `medicamento_ibfk_2` FOREIGN KEY (`idMedicina`) REFERENCES `receta` (`idMedicina`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE `medico` (
+  `idMedico` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `apellidoPaterno` varchar(100) NOT NULL,
+  `apellidoMaterno` varchar(100) NOT NULL,
+  `especialidad` varchar(100) NOT NULL,
+  PRIMARY KEY (`idMedico`),
+  CONSTRAINT `medico_ibfk_1` FOREIGN KEY (`idMedico`) REFERENCES `diagnostico` (`idMedico`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE `paciente` (
+  `idPaciente` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `apellidoPaterno` varchar(100) NOT NULL,
+  `apellidoMaterno` varchar(100) NOT NULL,
+  `edad` int(10) NOT NULL,
+  `sexo` varchar(50) NOT NULL,
+  `numero` int(12) NOT NULL,
+  PRIMARY KEY (`idPaciente`),
+  CONSTRAINT `paciente_ibfk_1` FOREIGN KEY (`idPaciente`) REFERENCES `historialclinico` (`idPaciente`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `paciente_ibfk_2` FOREIGN KEY (`idPaciente`) REFERENCES `receta` (`idPaciente`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `paciente_ibfk_3` FOREIGN KEY (`idPaciente`) REFERENCES `diagnostico` (`idPaciente`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE `receta` (
+  `idReceta` int(11) NOT NULL AUTO_INCREMENT,
+  `idPaciente` int(11) DEFAULT NULL,
+  `idMedicina` int(11) DEFAULT NULL,
+  `fecha` varchar(50) NOT NULL,
+  `estado` varchar(100) NOT NULL,
+  PRIMARY KEY (`idReceta`),
+  KEY `idPaciente` (`idPaciente`),
+  KEY `idMedicina` (`idMedicina`),
+  CONSTRAINT `receta_ibfk_1` FOREIGN KEY (`idPaciente`) REFERENCES `paciente` (`idPaciente`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `receta_ibfk_2` FOREIGN KEY (`idMedicina`) REFERENCES `medicamento` (`idMedicina`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+DROP TABLE IF EXISTS `rol`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `rol` (
+  `idRol` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  PRIMARY KEY (`idRol`),
+  CONSTRAINT `rol_ibfk_1` FOREIGN KEY (`idRol`) REFERENCES `usuarios` (`idRol`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+DROP TABLE IF EXISTS `usuarios`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `usuarios` (
+  `idUsuario` int(11) NOT NULL AUTO_INCREMENT,
+  `usuario` varchar(100) NOT NULL,
+  `contrasena` varchar(50) NOT NULL,
+  `idRol` int(11) DEFAULT NULL,
+  PRIMARY KEY (`idUsuario`),
+  KEY `idRol` (`idRol`),
+  CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`idRol`) REFERENCES `rol` (`idRol`) ON DELETE CASCADE ON UPDATE CASCADE
+);
